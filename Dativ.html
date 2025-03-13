@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dative Verben + Präposition</title>
+    <style>
+        h1{font-family:cursive
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            cursor: pointer;
+            background: lightblue;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .options button.correct {
+            background: green;
+            color: white;
+        }
+        .options button.wrong {
+            background: red;
+            color: white;
+        }
+        #next-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+        }
+        #result {
+            font-size: 22px;
+            font-weight: bold;
+            color: green;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Dativ Quiz</h1>
+        <div id="quiz">
+            <p class="question" id="question">Loading question...</p>
+            <div class="options" id="options"></div>
+            <button id="next-btn" onclick="nextQuestion()">Next</button>
+            <p id="result"></p>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "Sich beschäftigen?", options: ["mit", "aus", "von", "zu"], answer: "mit" },
+            { question: "Bestehen aus?", options: ["bei", "aus", "von", "zu"], answer: "aus" },
+            { question: "Diskutieren?", options: ["mit", "aus", "von", "bei"], answer: "mit" },
+            { question: "Einlaaden?", options: ["mit", "aus", "von", "zu"], answer: "zu" },
+            { question: "Sich entschuldigen?", options: ["mit", "aus", "bei", "zu"], answer: "bei" },
+            { question: "Erzählen?", options: ["mit", "aus", "von", "zu"], answer: "von" },
+            { question: "Fragen?", options: ["mit", "aus", "nach", "zu"], answer: "nach" },
+            { question: "Gehören?", options: ["mit", "aus", "von", "zu"], answer: "zu" },
+            { question: "Gratulieren?", options: ["mit", "aus", "von", "zu"], answer: "zu" },
+            { question: "Sprechen?", options: ["mit", "aus", "an", "zu"], answer: "mit" },
+            { question: "Reden?", options: ["mit", "aus", "von", "zu"], answer: "mit" },
+            { question: "Teilnehmen?", options: ["mit", "aus", "an", "nach"], answer: "an" },
+            { question: "Telefonieren?", options: ["mit", "aus", "von", "zu"], answer: "mit" },
+            { question: "Träumen?", options: ["mit", "aus", "von", "zu"], answer: "von" },
+            { question: "Sich treffeb?", options: ["mit", "aus", "von", "zu"], answer: "mit" },
+            { question: "Sich trennen?", options: ["mit", "nach", "von", "zu"], answer: "von" },
+            { question: "Sich unterhalten?", options: ["mit", "aus", "von", "zu"], answer: "mit" },
+            { question: "Sich Verabreden?", options: ["mit", "aus", "von", "zu"], answer: "mit" },
+            
+           
+
+
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // Function to shuffle array elements (Fisher-Yates algorithm)
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+            }
+        }
+
+        // Shuffle the questions
+        shuffleArray(questions);
+
+        // Shuffle answers for each question
+        questions.forEach(q => shuffleArray(q.options));
+
+        function loadQuestion() {
+            const questionElement = document.getElementById("question");
+            const optionsElement = document.getElementById("options");
+            const nextButton = document.getElementById("next-btn");
+
+            questionElement.textContent = questions[currentQuestionIndex].question;
+            optionsElement.innerHTML = "";
+
+            questions[currentQuestionIndex].options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(button, option);
+                optionsElement.appendChild(button);
+            });
+
+            nextButton.style.display = "none"; // Hide "Next" button at start
+        }
+
+        function checkAnswer(button, selectedOption) {
+            const correctAnswer = questions[currentQuestionIndex].answer;
+            const buttons = document.querySelectorAll(".options button");
+
+            // Disable all buttons after choosing an answer
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (correctAnswer.includes(selectedOption)) {
+                button.classList.add("correct");
+                score++;
+            } else {
+                button.classList.add("wrong");
+                // Highlight the correct answer in green
+                buttons.forEach(btn => {
+                    if (btn.textContent === correctAnswer) {
+                        btn.classList.add("correct");
+                    }
+                });
+            }
+
+            document.getElementById("next-btn").style.display = "block"; // Show "Next" button
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                if (score > questions.length) {
+            score = questions.length;  // This makes sure the score is capped at the total number of questions
+        }
+                document.getElementById("quiz").innerHTML = `<p id="result">Quiz Over! Your score: ${score}/${questions.length}</p>`;
+            }
+        }
+
+        loadQuestion();
+    </script>
+
+</body>
+</html>
